@@ -34,6 +34,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(f.read())
         else:
             self.send_error(404)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            with open('error.html', 'rb') as f:
+                self.wfile.write(f.read())
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
