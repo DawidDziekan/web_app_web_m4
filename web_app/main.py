@@ -1,39 +1,41 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
+from http import HTTPStatus
 import socket
 import json
 from datetime import datetime
 import threading
 
+
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed_path = urlparse(self.path)
         if parsed_path.path == '/':
-            self.send_response(200)
+            self.send_response(HTTPStatus.OK)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             with open('index.html', 'rb') as f:
                 self.wfile.write(f.read())
         elif parsed_path.path == '/message.html':
-            self.send_response(200)
+            self.send_response(HTTPStatus.OK)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             with open('message.html', 'rb') as f:
                 self.wfile.write(f.read())
         elif parsed_path.path == '/style.css':
-            self.send_response(200)
+            self.send_response(HTTPStatus.OK)
             self.send_header('Content-type', 'text/css')
             self.end_headers()
             with open('style.css', 'rb') as f:
                 self.wfile.write(f.read())
         elif parsed_path.path == '/logo.png':
-            self.send_response(200)
+            self.send_response(HTTPStatus.OK)
             self.send_header('Content-type', 'image/png')
             self.end_headers()
             with open('logo.png', 'rb') as f:
                 self.wfile.write(f.read())
         else:
-            self.send_error(404)
+            self.send_error(HTTPStatus.NOT_FOUND)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             with open('error.html', 'rb') as f:
@@ -46,7 +48,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         parsed_data = parse_qs(post_data)
         username = parsed_data['username'][0]
         message = parsed_data['message'][0]
-        self.send_response(302)
+        self.send_response(HTTPStatus.FOUND)
         self.send_header('Location', '/')
         self.end_headers()
         process_message(username, message)
